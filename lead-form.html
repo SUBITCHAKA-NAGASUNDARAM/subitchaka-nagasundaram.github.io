@@ -43,43 +43,41 @@
     <div id="status"></div>
   </div>
 
-  <script>
-    document.getElementById('leadForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById('btn');
-      const status = document.getElementById('status');
-      btn.disabled = true;
-      btn.innerText = 'Submitting...';
+ <script>
+  document.getElementById('leadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('btn');
+    const status = document.getElementById('status');
+    btn.disabled = true;
+    btn.innerText = 'Submitting...';
 
-      const payload = {
-        full_name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        Phone: document.getElementById('phone').value,
-        company: document.getElementById('company').value,
-        'revenue-range': document.getElementById('revenue').value
-      };
-
-      try {
-        await fetch('http://localhost:5678/webhook-test/lead-capture', {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload)
-        });
-
-        status.innerText = '✅ Success! Your lead has been routed.';
-        status.style.color = '#4ade80';
-        document.getElementById('leadForm').reset();
-      } catch (err) {
-        status.innerText = '❌ Error sending request.';
-        status.style.color = '#f87171';
-      } finally {
-        btn.disabled = false;
-        btn.innerText = 'Submit Lead';
-      }
+    // Form data formatted for browser 'no-cors' compliance
+    const payload = new URLSearchParams({
+      full_name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      Phone: document.getElementById('phone').value,
+      company: document.getElementById('company').value,
+      'revenue-range': document.getElementById('revenue').value
     });
-  </script>
+
+    try {
+      await fetch('http://localhost:5678/webhook-test/lead-capture', {
+        method: 'POST',
+        mode: 'no-cors',
+        body: payload
+      });
+
+      status.innerText = '✅ Success! Lead sent to n8n.';
+      status.style.color = '#4ade80';
+      document.getElementById('leadForm').reset();
+    } catch (err) {
+      status.innerText = '❌ Request failed.';
+      status.style.color = '#f87171';
+    } finally {
+      btn.disabled = false;
+      btn.innerText = 'Submit Lead';
+    }
+  });
+</script>
 </body>
 </html>
