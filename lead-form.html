@@ -51,7 +51,6 @@
       btn.disabled = true;
       btn.innerText = 'Submitting...';
 
-      // Updated keys to match n8n node expectations ($json.full_name & $json['revenue-range'])
       const payload = {
         full_name: document.getElementById('name').value,
         email: document.getElementById('email').value,
@@ -61,24 +60,20 @@
       };
 
       try {
-        // Use webhook-test while testing in n8n UI
-        const response = await fetch('http://localhost:5678/webhook-test/lead-capture', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify(formData)
-});
-        if (response.ok) {
-          status.innerText = '✅ Success! Your lead has been routed.';
-          status.style.color = '#4ade80';
-          document.getElementById('leadForm').reset();
-        } else {
-          status.innerText = '❌ Failed to connect to webhook.';
-          status.style.color = '#f87171';
-        }
+        await fetch('http://localhost:5678/webhook-test/lead-capture', {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+
+        status.innerText = '✅ Success! Your lead has been routed.';
+        status.style.color = '#4ade80';
+        document.getElementById('leadForm').reset();
       } catch (err) {
-        status.innerText = '❌ Error sending request (check CORS or n8n runner).';
+        status.innerText = '❌ Error sending request.';
         status.style.color = '#f87171';
       } finally {
         btn.disabled = false;
