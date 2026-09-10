@@ -12,72 +12,43 @@
     input, select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; box-sizing: border-box; }
     button { width: 100%; margin-top: 20px; padding: 12px; background: #0284c7; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
     button:hover { background: #0369a1; }
-    #status { margin-top: 15px; font-size: 0.9rem; text-align: center; }
+    #status { margin-top: 15px; font-size: 0.9rem; text-align: center; color: #4ade80; }
   </style>
 </head>
 <body>
   <div class="card">
     <h2>Book a Strategy Call</h2>
-    <form id="leadForm">
+    
+    <!-- Hidden iframe catches the response so the page doesn't refresh or navigate away -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) { document.getElementById('status').innerText='✅ Success! Lead routed to n8n.'; }"></iframe>
+    
+    <form action="http://localhost:5678/webhook-test/lead-capture" method="POST" target="hidden_iframe" onsubmit="submitted=true;">
       <label>Full Name</label>
-      <input type="text" id="name" required placeholder="Alex Mercer">
+      <input type="text" name="full_name" required placeholder="Alex Mercer">
 
       <label>Work Email</label>
-      <input type="email" id="email" required placeholder="alex@company.com">
+      <input type="email" name="email" required placeholder="alex@company.com">
 
       <label>Phone Number</label>
-      <input type="tel" id="phone" required placeholder="+15550192834">
+      <input type="tel" name="Phone" required placeholder="+15550192834">
 
       <label>Company Name</label>
-      <input type="text" id="company" required placeholder="Apex Media">
+      <input type="text" name="company" required placeholder="Apex Media">
 
       <label>Annual Revenue</label>
-      <select id="revenue">
+      <select name="revenue-range">
         <option value="Under $10k">Under $10k</option>
         <option value="$10k-$50k">$10k - $50k</option>
         <option value="$50k+">$50k+</option>
       </select>
 
-      <button type="submit" id="btn">Submit Lead</button>
+      <button type="submit">Submit Lead</button>
     </form>
     <div id="status"></div>
   </div>
 
- <script>
-  document.getElementById('leadForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('btn');
-    const status = document.getElementById('status');
-    btn.disabled = true;
-    btn.innerText = 'Submitting...';
-
-    // Form data formatted for browser 'no-cors' compliance
-    const payload = new URLSearchParams({
-      full_name: document.getElementById('name').value,
-      email: document.getElementById('email').value,
-      Phone: document.getElementById('phone').value,
-      company: document.getElementById('company').value,
-      'revenue-range': document.getElementById('revenue').value
-    });
-
-    try {
-      await fetch('http://localhost:5678/webhook-test/lead-capture', {
-        method: 'POST',
-        mode: 'no-cors',
-        body: payload
-      });
-
-      status.innerText = '✅ Success! Lead sent to n8n.';
-      status.style.color = '#4ade80';
-      document.getElementById('leadForm').reset();
-    } catch (err) {
-      status.innerText = '❌ Request failed.';
-      status.style.color = '#f87171';
-    } finally {
-      btn.disabled = false;
-      btn.innerText = 'Submit Lead';
-    }
-  });
-</script>
+  <script>
+    var submitted = false;
+  </script>
 </body>
 </html>
