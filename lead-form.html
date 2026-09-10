@@ -62,7 +62,7 @@
 
       try {
         // Use webhook-test while testing in n8n UI
-        const response = await fetch('http://localhost:5678/webhook-test/lead-capture', {
+     const response = await fetch('http://localhost:5678/webhook-test/lead-capture', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
