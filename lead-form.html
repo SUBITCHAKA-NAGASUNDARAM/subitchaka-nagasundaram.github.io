@@ -62,12 +62,13 @@
 
       try {
         // Use webhook-test while testing in n8n UI
-     const response = await fetch('http://localhost:5678/webhook-test/lead-capture', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
+        const response = await fetch('http://localhost:5678/webhook-test/lead-capture', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(formData)
+});
         if (response.ok) {
           status.innerText = '✅ Success! Your lead has been routed.';
           status.style.color = '#4ade80';
